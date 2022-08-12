@@ -14,6 +14,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 public class MyCodiApplication {
 
+
+//test - 추후 삭제 요망
+
+
     public static void main(String[] args) {
         SpringApplication.run(MyCodiApplication.class, args);
     }
