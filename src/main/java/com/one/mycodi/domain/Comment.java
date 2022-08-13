@@ -2,6 +2,7 @@ package com.one.mycodi.domain;
 
 
 
+import com.one.mycodi.dto.request.CommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,4 +31,11 @@ public class Comment extends Timestamped{
     @Column(nullable = false)
     String content;
 
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }

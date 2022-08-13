@@ -18,8 +18,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
 
+    //댓글 작성
     private final CommentRepository commentRepository;
-//    private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
@@ -62,6 +63,52 @@ public class CommentService {
                         .build()
         );
     }
+
+    //댓글 수정
+    @Transactional
+    public ResponseDto<?> updateComment(Long id, CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
+        if (null == httpServletRequest.getHeader("Refresh-Token")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == httpServletRequest.getHeader("Authorization")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        Member member = validateMember(httpServletRequest);
+        if (null == member) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Post post = postService.isPresentPost(commentRequestDto.getPostId());
+
+        if (null == post) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+        }
+
+        Comment comment = isPresentComment(id);
+
+        if (null == comment) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+        }
+
+        if (comment.validateMember(member)) {
+            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+        }
+        comment.update(commentRequestDto);
+        return ResponseDto.success(
+                CommentResponseDto.builder()
+                        .id(comment.getId())
+                        .author(comment.getMember().getUsername())
+                        .content(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .modifiedAt(comment.getModifiedAt())
+                        .build()
+        );
+    }
+
         //댓글 수정 메소드에서 사용
         @Transactional(readOnly = true)
         public Comment isPresentComment(Long id) {

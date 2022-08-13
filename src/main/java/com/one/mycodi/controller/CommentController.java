@@ -21,6 +21,6 @@ public class CommentController {
 
     @PutMapping("/mycodi/comments")
     public ResponseDto<?> updateComment(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
-        return commentService.updateComment
+        return commentService.updateComment(commentRequestDto, httpServletRequest);
     }
 }
