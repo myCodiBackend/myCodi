@@ -25,9 +25,8 @@ public class CommentController {
     }
 
     @DeleteMapping("/mycodi/comments/{id}")
-    public ResponseDto<?> deleteComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
-        return commentService.deleteComment(id,commentRequestDto, httpServletRequest);
+    public ResponseDto<?> deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
+        return commentService.deleteComment(id, httpServletRequest);
     }
 
-    @DeleteMapping
 }
