@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -14,9 +15,10 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    @Column
+    @Column(nullable = false)
     String username;
 
-    @Column
+    @Column(nullable = false)
+    @JsonIgnore
     String password;
 }
