@@ -1,20 +1,39 @@
 package com.one.mycodi.domain;
 
+import com.one.mycodi.dto.request.CommentRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Comment {
+public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    Long id;
 
-    @JoinColumn(name = "post_id")
-    @ManyToOne
-    private Post post;
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
+    @JoinColumn(name = "post_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    Post post;
 
-    @Column
-    private String content;
+    @Column(nullable = false)
+    String content;
 
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
+    }
+
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 }
