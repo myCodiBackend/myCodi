@@ -20,12 +20,11 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     String title;
 
-    @Column(nullable = false)
+    @Column
     String imgUrl;
 
     @Column(nullable = false)
     String content;
-
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne
