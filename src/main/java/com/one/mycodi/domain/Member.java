@@ -6,20 +6,17 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Member {
+public class Member  extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @Column
-    String username;
+    private String username;
+
 
     @Column
-    String nickname;
-
-    @Column
-    String password;
-
+    private String password;
 
 
 }

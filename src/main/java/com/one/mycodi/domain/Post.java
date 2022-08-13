@@ -1,31 +1,50 @@
 package com.one.mycodi.domain;
 
+import com.one.mycodi.dto.request.PostRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
-public class Post {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    String title;
+    private String title;
+
+    @Column
+    private String imgUrl;
 
     @Column(nullable = false)
-    String imgUrl;
-
-    @Column(nullable = false)
-    String content;
+    private String content;
 
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne
-    Member member;
+    private Member member;
 
-    int heart;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+
+
+//    int heart;
+
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
 
 
 }

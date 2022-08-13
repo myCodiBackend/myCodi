@@ -1,20 +1,20 @@
 package com.one.mycodi.domain;
 
 
-
 import javax.persistence.*;
 
 @Entity
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "post_id")
-    Post post;
+    @ManyToOne
+    private Post post;
 
 
-    String content;
+    @Column
+    private String content;
 
 }
