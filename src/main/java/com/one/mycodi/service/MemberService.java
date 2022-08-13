@@ -1,6 +1,6 @@
 package com.one.mycodi.service;
 
-import com.one.mycodi.domain.UserDetailsImpl;
+import com.one.mycodi.domain.Member;
 import com.one.mycodi.dto.request.LoginRequestDto;
 import com.one.mycodi.dto.request.MemberRequestDto;
 import com.one.mycodi.dto.request.TokenDto;
@@ -14,26 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class MemberService {
-    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-    private final HeartRepository heartRepository;
 
-    MemberService(PostRepository postRepository, MemberRepository memberRepository, CommentRepository commentRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, HeartRepository heartRepository){
-        this.postRepository = postRepository;
+
+    MemberService(MemberRepository memberRepository,PasswordEncoder passwordEncoder, TokenProvider tokenProvider){
         this.memberRepository = memberRepository;
-        this.commentRepository = commentRepository;
         this. passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
-        this.heartRepository = heartRepository;
     }
 
     @Transactional
@@ -74,10 +67,6 @@ public class MemberService {
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
             return ResponseDto.fail("INVALID_MEMBER", "사용자를 찾을 수 없습니다.");
         }
-
-//    UsernamePasswordAuthenticationToken authenticationToken =
-//        new UsernamePasswordAuthenticationToken(requestDto.getNickname(), requestDto.getPassword());
-//    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);

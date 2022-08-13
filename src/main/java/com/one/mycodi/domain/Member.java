@@ -1,15 +1,21 @@
 package com.one.mycodi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Member extends Timestamped {
 
     @Id
