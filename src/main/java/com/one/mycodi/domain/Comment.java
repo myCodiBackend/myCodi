@@ -14,7 +14,7 @@ public class Comment {
     @JoinColumn(name = "post_id")
     Post post;
 
-//코멘트 수정, 리베이스 테스트6, 메인 내용 변경 둘!
+//코멘트 수정, 리베이스 완료?!
 
     String content;
 
