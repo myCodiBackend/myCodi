@@ -1,21 +1,23 @@
 package com.one.mycodi.domain;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 public class Member  extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String username;
 
 
-    @Column
+    @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
 
