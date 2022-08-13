@@ -26,10 +26,10 @@ public class Comment extends Timestamped{
 
     @JoinColumn(name = "post_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    Post post;
+    private Post post;
 
     @Column(nullable = false)
-    String content;
+    private String content;
 
     public void update(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
