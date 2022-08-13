@@ -1,11 +1,14 @@
 package com.one.mycodi.domain;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
+@Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -15,11 +18,5 @@ public class Member {
     String username;
 
     @Column
-    String nickname;
-
-    @Column
     String password;
-
-
-
 }

@@ -1,0 +1,79 @@
+package com.one.mycodi.service;
+
+import com.one.mycodi.domain.Comment;
+import com.one.mycodi.domain.Member;
+import com.one.mycodi.domain.Post;
+import com.one.mycodi.dto.request.CommentRequestDto;
+import com.one.mycodi.dto.response.CommentResponseDto;
+import com.one.mycodi.dto.response.ResponseDto;
+import com.one.mycodi.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class CommentService {
+
+    private final CommentRepository commentRepository;
+//    private final TokenProvider tokenProvider;
+
+    @Transactional
+    public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
+        if (null == httpServletRequest.getHeader("Refresh-Token")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == httpServletRequest.getHeader("Authorization")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        Member member = validateMember(httpServletRequest);
+        if (null == member) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+
+        Post post = postService.isPresentPost(commentRequestDto.getPostId());
+        if (null == post) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+        }
+        Comment comment = Comment.builder()
+                .member(member)
+                .post(post)
+                .content(commentRequestDto.getContent())
+                .build();
+
+        commentRepository.save(comment);
+
+        return ResponseDto.success(
+                CommentResponseDto.builder()
+
+                        .id(comment.getId())
+                        .author(comment.getMember().getUsername())
+                        .content(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .modifiedAt(comment.getModifiedAt())
+                        .build()
+        );
+    }
+        //댓글 수정 메소드에서 사용
+        @Transactional(readOnly = true)
+        public Comment isPresentComment(Long id) {
+            Optional<Comment> optionalComment = commentRepository.findById(id);
+            return optionalComment.orElse(null);
+        }
+        //Token -> Member 검증
+        @Transactional
+        public Member validateMember(HttpServletRequest request) {
+            if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+                return null;
+            }
+            return tokenProvider.getMemberFromAuthentication();
+        }
+}

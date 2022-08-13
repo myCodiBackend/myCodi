@@ -2,18 +2,32 @@ package com.one.mycodi.domain;
 
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-//리베이스 테스트
+
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class Comment {
-    @Id
+public class Comment extends Timestamped{
+    @Id//GenearatinType.IDENTITY -> Id 증가/생성 타입을 DB에 위임. MySQL 사용시 IDENTITY 사용하는게 좋음
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @JoinColumn(name = "post_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     Post post;
 
+    @Column(nullable = false)
     String content;
 
 }
