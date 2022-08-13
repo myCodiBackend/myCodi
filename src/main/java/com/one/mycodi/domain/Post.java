@@ -15,22 +15,22 @@ import javax.persistence.*;
 public class Post extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    String title;
+    private String title;
 
     @Column
-    String imgUrl;
+    private String imgUrl;
 
     @Column(nullable = false)
-    String content;
+    private String content;
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne
-    Member member;
+    private Member member;
 
-    int heart;
+    private int heart;
 
 
 }
