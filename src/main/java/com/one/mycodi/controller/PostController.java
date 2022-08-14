@@ -40,16 +40,7 @@ public class PostController {
         return postService.updatePost(id, postRequestDto);
     }
 
-    @RequestMapping(value = "/mycodi/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
     public ResponseDto<?> deletePost(@PathVariable Long id){
         return postService.deletePost(id);
     }
-
-
-
-
-
-
-
-}
-
