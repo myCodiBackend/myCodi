@@ -22,6 +22,7 @@ public class CommentService {
     //댓글 작성
     private final CommentRepository commentRepository;
     private final TokenProvider tokenProvider;
+    private final PostService postService;
 
 //    @Transactional
 //    public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
