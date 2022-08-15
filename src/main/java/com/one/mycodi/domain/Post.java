@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -51,6 +52,10 @@ public class Post extends Timestamped {
     }
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
+    }
+
+    public void update(List<PostHeart> postHearts){
+        this.heartCount = postHearts.size();
     }
 
     public void update(List<PostHeart> postHearts){
