@@ -1,5 +1,7 @@
 package com.one.mycodi.domain;
 
+
+
 import com.one.mycodi.dto.request.CommentRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Comment extends Timestamped{
-    @Id
+    @Id//GenearatinType.IDENTITY -> Id 증가/생성 타입을 DB에 위임. MySQL 사용시 IDENTITY 사용하는게 좋음
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
@@ -37,3 +39,4 @@ public class Comment extends Timestamped{
         return !this.member.equals(member);
     }
 }
+

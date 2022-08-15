@@ -1,3 +1,4 @@
+
 package com.one.mycodi.domain;
 
 import com.one.mycodi.dto.request.PostRequestDto;
@@ -48,3 +49,4 @@ public class Post extends Timestamped {
 
 
 }
+
