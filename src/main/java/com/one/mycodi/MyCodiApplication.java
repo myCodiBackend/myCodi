@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
 @SpringBootApplication
-@EnableJpaAuditing
 public class MyCodiApplication {
 
     public static void main(String[] args) {
