@@ -49,7 +49,7 @@ public class MemberService {
         return ResponseDto.success(
                 MemberResponseDto.builder()
                         .id(member.getId())
-                        .nickname(member.getUsername())
+                        .username(member.getUsername())
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build()
@@ -58,7 +58,7 @@ public class MemberService {
 
     @Transactional
     public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        Member member = isPresentMember(requestDto.getNickname());
+        Member member = isPresentMember(requestDto.getUsername());
         if (null == member) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "사용자를 찾을 수 없습니다.");
@@ -74,7 +74,7 @@ public class MemberService {
         return ResponseDto.success(
                 MemberResponseDto.builder()
                         .id(member.getId())
-                        .nickname(member.getUsername())
+                        .username(member.getUsername())
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build()
@@ -96,7 +96,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member isPresentMember(String  username) {
-        Optional<Member> optionalMember = memberRepository.findByNickname(username);
+        Optional<Member> optionalMember = memberRepository.findByUsername(username);
         return optionalMember.orElse(null);
     }
 

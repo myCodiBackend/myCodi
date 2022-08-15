@@ -32,7 +32,7 @@ public class MemberController {
     public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto,
                                 HttpServletResponse response
     ) {
-        System.out.println(requestDto.getNickname());
+        System.out.println(requestDto.getUsername());
         return memberService.login(requestDto, response);
     }
 
