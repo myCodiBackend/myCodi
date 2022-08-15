@@ -120,7 +120,6 @@ public class PostService {
             return ResponseDto.fail("200", "존재하지 않는 게시글 id 입니다.");
         }
 
-
         postRepository.delete(post);
 
         return ResponseDto.success("delete success");
