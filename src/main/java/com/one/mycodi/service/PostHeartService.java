@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,12 +54,16 @@ public class PostHeartService {
         }
 
         if (!postHeartOptional.isPresent()) {
+//            post.update(post.getHeartCount());
             PostHeart postHeart = PostHeart.builder()
-                    .postHerat(1)
+                    .postHeart(1)
                     .member(member)
                     .post(post)
                     .build();
             postHeartRepository.save(postHeart);
+            List<PostHeart> postHearts = postHeartRepository.findByPost(post);
+            post.update(postHearts);
+
         }
         return ResponseDto.success("좋아요");
     }
@@ -94,6 +99,8 @@ public class PostHeartService {
             return ResponseDto.fail("BAD_REQUEST", "좋아요를 누르지 않으셨습니다.");
         }
         postHeartRepository.delete(postHeartOptional.get());
+        List<PostHeart> postHearts = postHeartRepository.findByPost(post);
+        post.update(postHearts);
         return ResponseDto.success("좋아요 취소");
     }
     @Transactional

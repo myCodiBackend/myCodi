@@ -67,6 +67,7 @@ public class SecurityConfiguration{
                 .authorizeRequests()
                 .antMatchers("/mycodi/members/**").permitAll()
                 .antMatchers("/mycodi/posts/**").permitAll()
+                .antMatchers("/mycodi/posthearts/**").permitAll()
                 .antMatchers("/api/comment/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()

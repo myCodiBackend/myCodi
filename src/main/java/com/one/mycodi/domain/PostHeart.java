@@ -19,7 +19,7 @@ public class PostHeart {
     private Long id;
 
     @Column
-    private int postHerat;
+    private int postHeart;
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

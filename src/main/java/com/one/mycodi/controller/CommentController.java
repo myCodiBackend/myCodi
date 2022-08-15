@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 public class CommentController {
-//리베이스 테스트
+
     private final CommentService commentService;
 
     @PostMapping("/mycodi/comments")

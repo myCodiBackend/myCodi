@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -39,11 +40,19 @@ public class Post extends Timestamped {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
-    private List<PostHeart> PostHeart;
+    private List<PostHeart> PostHeart = new ArrayList<>();
+
+    @Column
+    private int heartCount = this.PostHeart.size();
+
 
     public void update(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
+    }
+
+    public void update(List<PostHeart> postHearts){
+        this.heartCount = postHearts.size();
     }
 
 
