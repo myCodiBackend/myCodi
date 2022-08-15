@@ -1,14 +1,11 @@
 package com.one.mycodi.domain;
 
+import lombok.*;
+import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Builder
@@ -16,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 public class Member extends Timestamped {
 
     @Id
@@ -49,5 +47,6 @@ public class Member extends Timestamped {
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }
+
 
 }
