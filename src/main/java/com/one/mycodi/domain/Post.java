@@ -1,5 +1,7 @@
 package com.one.mycodi.domain;
 
+import com.one.mycodi.dto.request.PostRequestDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,12 +9,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Builder
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-public class Post extends Timestamped{
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Post extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,7 +35,17 @@ public class Post extends Timestamped{
     @ManyToOne
     private Member member;
 
-    private int heart;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+
+//    int heart;
+
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+    }
 
 
 }
+
+
