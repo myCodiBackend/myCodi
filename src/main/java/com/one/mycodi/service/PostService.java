@@ -1,11 +1,13 @@
 package com.one.mycodi.service;
 
 
+import com.one.mycodi.domain.Member;
 import com.one.mycodi.domain.Post;
 import com.one.mycodi.dto.request.PostRequestDto;
 import com.one.mycodi.dto.response.PostListResponseDto;
 import com.one.mycodi.dto.response.PostResponseDto;
 import com.one.mycodi.dto.response.ResponseDto;
+import com.one.mycodi.jwt.TokenProvider;
 import com.one.mycodi.repository.PostRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +28,30 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final TokenProvider tokenProvider;
 
     @Transactional
-    public ResponseDto<?> createPost(PostRequestDto requestDto) throws IOException {// post 작성
+    public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {// post 작성
+
+        if (null == httpServletRequest.getHeader("Refresh-Token")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == httpServletRequest.getHeader("Authorization")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        Member member = validateMember(httpServletRequest);
+        if (null == member) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
 
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .member(member)
                 .build();
         postRepository.save(post);
 
@@ -86,6 +105,7 @@ public class PostService {
                         .author(post.getMember().getUsername())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
+                        .heart(post.getPostHeart().size())
                         .imageUrl(null)
                         .build()
         );
@@ -131,6 +151,13 @@ public class PostService {
         return optionalPost.orElse(null);
     }
 
+    @Transactional
+    public Member validateMember(HttpServletRequest httpServletRequest) {
+        if (!tokenProvider.validateToken(httpServletRequest.getHeader("Refresh-Token"))) {
+            return null;
+        }
+        return tokenProvider.getMemberFromAuthentication();
+    }
 
 }
 

@@ -20,8 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @RequestMapping(value = "/mycodi/posts", method = RequestMethod.POST) // 게시글 작성
-    public ResponseDto<?> createPost(@RequestPart(value = "post") PostRequestDto requestDto) throws IOException {
-        return postService.createPost(requestDto);
+    public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {
+        return postService.createPost(requestDto, httpServletRequest);
     }
 
 
