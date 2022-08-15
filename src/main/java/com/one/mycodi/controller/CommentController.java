@@ -17,11 +17,11 @@ public class CommentController {
     public ResponseDto<?> createComment(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
         return commentService.createComment(commentRequestDto, httpServletRequest);
     }
-
-    @PutMapping("/mycodi/comments/{id}")
-    public ResponseDto<?> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
-        return commentService.updateComment(id, commentRequestDto, httpServletRequest);
-    }
+//
+//    @PutMapping("/mycodi/comments/{id}")
+//    public ResponseDto<?> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
+//        return commentService.updateComment(id, commentRequestDto, httpServletRequest);
+//    }
 
     @DeleteMapping("/mycodi/comments/{id}")
     public ResponseDto<?> deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
