@@ -44,6 +44,9 @@ public class Post extends Timestamped {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
     }
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
 
 
 }
