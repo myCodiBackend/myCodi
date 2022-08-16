@@ -20,15 +20,17 @@ public class PostController {
     private final PostService postService;
 
     @RequestMapping(value = "/mycodi/posts", method = RequestMethod.POST) // 게시글 작성
-    public ResponseDto<?> createPost(@RequestPart(value = "post") PostRequestDto requestDto) throws IOException {
-        return postService.createPost(requestDto);
+    public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {
+        return postService.createPost(requestDto, httpServletRequest);
     }
-
 
     @RequestMapping(value = "/mycodi/posts", method = RequestMethod.GET) // 게시글 전체 조회
     public ResponseDto<?> getAllPosts() {
         return postService.getAllPost();
     }
+
+    @GetMapping("/mycodi/posthearts")
+    public ResponseDto<?> getAllPostByPostHeart() {return postService.getAllPostByPostHeart();}
 
     @RequestMapping(value = "/mycodi/posts/{id}", method = RequestMethod.GET) //게시글 단건 조회
     public ResponseDto<?> getPost(@PathVariable Long id) {

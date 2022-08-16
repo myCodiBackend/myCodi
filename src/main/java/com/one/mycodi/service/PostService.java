@@ -1,11 +1,16 @@
 package com.one.mycodi.service;
 
 
+import com.one.mycodi.domain.Comment;
+import com.one.mycodi.domain.Member;
 import com.one.mycodi.domain.Post;
 import com.one.mycodi.dto.request.PostRequestDto;
+import com.one.mycodi.dto.response.CommentResponseDto;
 import com.one.mycodi.dto.response.PostListResponseDto;
 import com.one.mycodi.dto.response.PostResponseDto;
 import com.one.mycodi.dto.response.ResponseDto;
+import com.one.mycodi.jwt.TokenProvider;
+import com.one.mycodi.repository.CommentRepository;
 import com.one.mycodi.repository.PostRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +31,31 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final TokenProvider tokenProvider;
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public ResponseDto<?> createPost(PostRequestDto requestDto) throws IOException {// post 작성
+    public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {// post 작성
+
+        if (null == httpServletRequest.getHeader("Refresh-Token")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == httpServletRequest.getHeader("Authorization")) {
+            return ResponseDto.fail("MEMBER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        Member member = validateMember(httpServletRequest);
+        if (null == member) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
 
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .member(member)
                 .build();
         postRepository.save(post);
 
@@ -62,12 +85,21 @@ public class PostService {
             // 결과 저장 리스트에 담기
             dtoList.add(postListResponseDto);
         }
-
-
-
         return ResponseDto.success(dtoList);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPostByPostHeart() {
+
+        List<Post> postList = postRepository.findAllByOrderByHeartCountDesc();
+        List<PostListResponseDto> postListResponseDtoArrayList = new ArrayList<>();
+        for (Post post : postList) {
+            PostListResponseDto postListResponseDto = new PostListResponseDto(post);
+            postListResponseDtoArrayList.add(postListResponseDto);
+        }
+
+        return ResponseDto.success(postListResponseDtoArrayList);
+    }
 
 
     @Transactional(readOnly = true)
@@ -77,6 +109,20 @@ public class PostService {
             return ResponseDto.fail("200", "존재하지 않는 게시글 id 입니다.");
         }
 
+        List<Comment> commentList = commentRepository.findAllByPost(post);
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+
+        for(Comment comment : commentList){
+            commentResponseDtoList.add(
+                    CommentResponseDto.builder()
+                    .id(comment.getId())
+                    .author(post.getMember().getUsername())
+                    .content(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build()
+            );
+        }
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -86,6 +132,8 @@ public class PostService {
                         .author(post.getMember().getUsername())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
+                        .heart(post.getPostHeart().size())
+                        .comments(commentResponseDtoList)
                         .imageUrl(null)
                         .build()
         );
@@ -131,6 +179,13 @@ public class PostService {
         return optionalPost.orElse(null);
     }
 
+    @Transactional
+    public Member validateMember(HttpServletRequest httpServletRequest) {
+        if (!tokenProvider.validateToken(httpServletRequest.getHeader("Refresh-Token"))) {
+            return null;
+        }
+        return tokenProvider.getMemberFromAuthentication();
+    }
 
 }
 

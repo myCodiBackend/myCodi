@@ -48,6 +48,7 @@ public class TokenProvider {
 
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
+
                 //페이로드
                 .setSubject(member.getUsername())
                 //claim< JWT에서 제공하지 않는 커스텀할수있는 페이로드, 현제 맴버라는 권한을 담았음
