@@ -162,7 +162,6 @@ public class PostService {
                         .modifiedAt(post.getModifiedAt())
                         .heart(post.getPostHeart().size())
 //                        .comments(commentResponseDtoList)
-                        .imageUrl(null)
                         .imageUrl(post.getImageUrl())
                         .build()
         );
