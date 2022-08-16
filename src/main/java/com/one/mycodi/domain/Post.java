@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
-
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -36,14 +34,17 @@ public class Post extends Timestamped {
     @ManyToOne
     private Member member;
 
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
+
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
     private List<PostHeart> PostHeart = new ArrayList<>();
 
+
     @Column
-    private int heartCount = this.PostHeart.size();
+    private int heartCount;
 
 
     public void update(PostRequestDto postRequestDto) {
