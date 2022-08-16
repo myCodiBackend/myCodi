@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServletRequest;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/mycodi/comments")
+    @PostMapping("/api/comments")
     public ResponseDto<?> createComment(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
         return commentService.createComment(commentRequestDto, httpServletRequest);
     }
+//
+//    @PutMapping("/mycodi/comments/{id}")
+//    public ResponseDto<?> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
+//        return commentService.updateComment(id, commentRequestDto, httpServletRequest);
+//    }
 
-    @PutMapping("/mycodi/comments/{id}")
-    public ResponseDto<?> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
-        return commentService.updateComment(id, commentRequestDto, httpServletRequest);
-    }
-
-    @DeleteMapping("/mycodi/comments/{id}")
+    @DeleteMapping("/api/comments/{id}")
     public ResponseDto<?> deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
         return commentService.deleteComment(id, httpServletRequest);
     }

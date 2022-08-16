@@ -1,5 +1,6 @@
 package com.one.mycodi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;

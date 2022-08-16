@@ -68,9 +68,9 @@ public class SecurityConfiguration{
                 //인증일 필요없는 API 설정정
                 .and()
                 .authorizeRequests()
-                .antMatchers("/mycodi/members/**").permitAll()
-                .antMatchers("/mycodi/posts/**").permitAll()
-                .antMatchers("/mycodi/posthearts/**").permitAll()
+                .antMatchers("/api/members/**").permitAll()
+                .antMatchers("/api/posts/**").permitAll()
+                .antMatchers("/api/posthearts/**").permitAll()
                 .antMatchers("/api/comment/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
