@@ -6,6 +6,7 @@ import com.one.mycodi.domain.Post;
 import com.one.mycodi.dto.request.CommentRequestDto;
 import com.one.mycodi.dto.response.CommentResponseDto;
 import com.one.mycodi.dto.response.ResponseDto;
+import com.one.mycodi.jwt.TokenProvider;
 import com.one.mycodi.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CommentService {
     //댓글 작성
     private final CommentRepository commentRepository;
     private final TokenProvider tokenProvider;
+    private final PostService postService;
 
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {

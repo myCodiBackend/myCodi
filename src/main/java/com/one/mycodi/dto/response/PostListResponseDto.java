@@ -18,6 +18,7 @@ public class PostListResponseDto {
     private String author;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
+    private int heartCount;
 
     private List<Comment> commentList;
 
@@ -29,6 +30,7 @@ public class PostListResponseDto {
         this.createAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.commentList = post.getComments();
+        this.heartCount = post.getHeartCount();
 
     }
 }
