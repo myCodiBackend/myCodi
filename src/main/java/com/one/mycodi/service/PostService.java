@@ -1,6 +1,10 @@
 package com.one.mycodi.service;
 
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.one.mycodi.domain.Comment;
 import com.one.mycodi.domain.Member;
 import com.one.mycodi.domain.Post;
@@ -12,15 +16,18 @@ import com.one.mycodi.dto.response.ResponseDto;
 import com.one.mycodi.jwt.TokenProvider;
 import com.one.mycodi.repository.CommentRepository;
 import com.one.mycodi.repository.PostRepository;
+import com.one.mycodi.shared.S3Utils;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +41,12 @@ public class PostService {
     private final TokenProvider tokenProvider;
     private final CommentRepository commentRepository;
 
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
     @Transactional
-    public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {// post 작성
+    public ResponseDto<?> createPost(PostRequestDto requestDto, MultipartFile multipartFile, HttpServletRequest httpServletRequest) throws IOException {// post 작성
 
         if (null == httpServletRequest.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
@@ -51,10 +62,27 @@ public class PostService {
         if (null == member) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
+        String imageUrl = null;
+
+        if (!multipartFile.isEmpty()) {
+            String fileName = S3Utils.buildFileName(multipartFile.getOriginalFilename());
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(multipartFile.getContentType());
+
+            InputStream inputStream = multipartFile.getInputStream();
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+
+
+            imageUrl = amazonS3Client.getUrl(bucketName, fileName).toString();
+        }
+        
 
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .imageUrl(imageUrl)
                 .member(member)
                 .build();
         postRepository.save(post);
@@ -67,7 +95,7 @@ public class PostService {
                         .author(post.getMember().getUsername())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
-                        .imageUrl(null)
+                        .imageUrl(post.getImageUrl())
                         .build());
 
 
@@ -134,13 +162,13 @@ public class PostService {
                         .modifiedAt(post.getModifiedAt())
                         .heart(post.getPostHeart().size())
                         .comments(commentResponseDtoList)
-                        .imageUrl(null)
+                        .imageUrl(post.getImageUrl())
                         .build()
         );
     }
 
     @Transactional
-    public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto,HttpServletRequest request) {   // post 업데이트
+    public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto,MultipartFile multipartFile,HttpServletRequest request)throws IOException {   // post 업데이트
         if (null == request.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -167,7 +195,35 @@ public class PostService {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
-        post.update(requestDto);
+        String imageUrl;
+        if (!multipartFile.isEmpty()) {
+
+            String fileName = S3Utils.buildFileName(multipartFile.getOriginalFilename());
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(multipartFile.getContentType());
+
+            try( InputStream inputStream = multipartFile.getInputStream() ) {
+                amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+
+
+                imageUrl = amazonS3Client.getUrl(bucketName, fileName).toString();
+
+            }
+            catch (IOException e){
+                throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", multipartFile.getOriginalFilename()));
+            }
+            post.updateImage(imageUrl);
+        }
+        else {
+
+            post.update(requestDto);
+
+        }
+
+
+
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -177,7 +233,7 @@ public class PostService {
                         .author(post.getMember().getUsername())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
-                        .imageUrl(null)
+                        .imageUrl(post.getImageUrl())
                         .build()
         );
     }

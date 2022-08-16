@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableAspectJAutoProxy
 @EnableJpaAuditing
 @SpringBootApplication
-@EnableJpaAuditing
 public class MyCodiApplication {
 
     public static void main(String[] args) {

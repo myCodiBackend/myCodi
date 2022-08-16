@@ -18,8 +18,9 @@ public class PostController {
     private final PostService postService;
 
     @RequestMapping(value = "/api/posts", method = RequestMethod.POST) // 게시글 작성
-    public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) throws IOException {
-        return postService.createPost(requestDto, httpServletRequest);
+    public ResponseDto<?> createPost(@RequestPart(value = "post") PostRequestDto requestDto,@RequestPart(value = "image") MultipartFile multipartFile,
+                                     HttpServletRequest httpServletRequest) throws IOException {
+        return postService.createPost(requestDto,multipartFile, httpServletRequest);
     }
 
     @RequestMapping(value = "/api/posts", method = RequestMethod.GET) // 게시글 전체 조회
@@ -37,9 +38,10 @@ public class PostController {
         return postService.getPost(id);
     }
 
-    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PUT) //게시글 수정
-    public ResponseDto<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, HttpServletRequest httpServletRequest) {
-        return postService.updatePost(id, postRequestDto,httpServletRequest);
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PATCH) //게시글 수정,이미지까지
+    public ResponseDto<?> updatePost(@PathVariable Long id,@RequestPart(value = "post",required = false) PostRequestDto postrequestDto,@RequestPart(value = "image",required = false) MultipartFile multipartFile,
+                                     HttpServletRequest httpServletRequest)throws IOException {
+        return postService.updatePost(id, postrequestDto,multipartFile,httpServletRequest);
     }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제

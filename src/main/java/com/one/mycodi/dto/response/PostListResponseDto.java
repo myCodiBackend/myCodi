@@ -19,7 +19,7 @@ public class PostListResponseDto {
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
     private int heartCount;
-
+    private String imageUrl;
     private List<Comment> commentList;
 
 
@@ -31,6 +31,7 @@ public class PostListResponseDto {
         this.modifiedAt = post.getModifiedAt();
         this.commentList = post.getComments();
         this.heartCount = post.getHeartCount();
+        this.imageUrl = post.getImageUrl();
 
     }
 }
