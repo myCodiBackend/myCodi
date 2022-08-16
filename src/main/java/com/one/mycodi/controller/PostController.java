@@ -19,35 +19,31 @@ public class PostController {
 
     private final PostService postService;
 
-    @RequestMapping(value = "/mycodi/posts", method = RequestMethod.POST) // 게시글 작성
+    @RequestMapping(value = "/api/posts", method = RequestMethod.POST) // 게시글 작성
     public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto,HttpServletRequest httpServletRequest)throws IOException  {
         return postService.createPost(requestDto,httpServletRequest);
     }
 
 
-    @RequestMapping(value = "/mycodi/posts", method = RequestMethod.GET) // 게시글 전체 조회
+    @RequestMapping(value = "/api/posts", method = RequestMethod.GET) // 게시글 전체 조회
     public ResponseDto<?> getAllPosts() {
         return postService.getAllPost();
     }
 
-    @RequestMapping(value = "/mycodi/posts/{id}", method = RequestMethod.GET) //게시글 단건 조회
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.GET) //게시글 단건 조회
     public ResponseDto<?> getPost(@PathVariable Long id) {
         return postService.getPost(id);
     }
 
-    @RequestMapping(value = "/mycodi/posts/{id}", method = RequestMethod.PUT) //게시글 수정
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PUT) //게시글 수정
     public ResponseDto<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, HttpServletRequest httpServletRequest) {
         return postService.updatePost(id, postRequestDto,httpServletRequest);
     }
 
-    @RequestMapping(value = "/mycodi/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
     public ResponseDto<?> deletePost(@PathVariable Long id,HttpServletRequest request){
         return postService.deletePost(id,request);
     }
-
-
-
-
 
 
 

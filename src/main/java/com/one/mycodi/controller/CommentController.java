@@ -14,7 +14,7 @@ public class CommentController {
 //리베이스 테스트
     private final CommentService commentService;
 
-    @PostMapping("/mycodi/comments")
+    @PostMapping("/api/comments")
     public ResponseDto<?> createComment(@RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
         return commentService.createComment(commentRequestDto, httpServletRequest);
     }
@@ -24,7 +24,7 @@ public class CommentController {
 //        return commentService.updateComment(id, commentRequestDto, httpServletRequest);
 //    }
 
-    @DeleteMapping("/mycodi/comments/{id}")
+    @DeleteMapping("/api/comments/{id}")
     public ResponseDto<?> deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
         return commentService.deleteComment(id, httpServletRequest);
     }
