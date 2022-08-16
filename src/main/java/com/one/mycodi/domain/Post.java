@@ -26,7 +26,7 @@ public class Post extends Timestamped {
     private String title;
 
     @Column
-    private String imgUrl;
+    private String imageUrl;
 
     @Column(nullable = false)
     private String content;
@@ -48,6 +48,9 @@ public class Post extends Timestamped {
     public void update(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
+    }
+    public void updateImage(String imageUrl){
+        this.imageUrl = imageUrl;
     }
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
