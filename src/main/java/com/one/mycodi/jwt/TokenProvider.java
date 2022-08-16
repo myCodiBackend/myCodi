@@ -48,13 +48,19 @@ public class TokenProvider {
 
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
+                //페이로드
                 .setSubject(member.getUsername())
+                //claim< JWT에서 제공하지 않는 커스텀할수있는 페이로드, 현제 맴버라는 권한을 담았음
                 .claim(AUTHORITIES_KEY, Authority.ROLE_MEMBER.toString())
+                // accessToken의 만료 시간을 담은 페이로드
                 .setExpiration(accessTokenExpiresIn)
+                //시그니처를 담고있음, 여기서부터는 페이로드가 아님
                 .signWith(key, SignatureAlgorithm.HS256)
+                //마무리
                 .compact();
 
         String refreshToken = Jwts.builder()
+                // refreshToken 만료 시간 담음
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPRIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -65,6 +71,8 @@ public class TokenProvider {
                 .value(refreshToken)
                 .build();
 
+        //refreshToken 따로 DB에 저장
+        //이유 : accessToken 만료 되었을시 refreshToken이랑 유저랑 1대1 맵핑 확인후 accessToken 재발급을 하기 위해
         refreshTokenRepository.save(refreshTokenObject);
 
         return TokenDto.builder()

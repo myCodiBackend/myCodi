@@ -13,6 +13,7 @@ public class TokenDto {
     private String grantType;
     private String accessToken;
     private String refreshToken;
+    // accessToken 만료시간
     private Long accessTokenExpiresIn;
 }
 
