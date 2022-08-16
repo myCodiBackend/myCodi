@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -141,6 +143,32 @@ public class CommentService {
         commentRepository.delete(comment);
         return ResponseDto.success("success");
     }
+
+    //해당 게시글에 있는 전체 댓글 가져오기
+    @Transactional
+    public ResponseDto<?> getComment(CommentRequestDto commentRequestDto) {
+
+        Post post = postService.isPresentPost(commentRequestDto.getPostId());
+        if (null == post) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+        }
+        List<Comment> commentList = commentRepository.findAllByPost(post);
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        for(Comment comment : commentList){
+            commentResponseDtoList.add(
+            CommentResponseDto.builder()
+                    .id(comment.getId())
+                    .author(post.getMember().getUsername())
+                    .content(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build()
+            );
+        }
+        return ResponseDto.success(commentResponseDtoList);
+    }
+
+
 
         //댓글 수정 메소드에서 사용
         @Transactional(readOnly = true)

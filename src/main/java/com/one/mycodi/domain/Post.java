@@ -57,12 +57,6 @@ public class Post extends Timestamped {
     public void update(List<PostHeart> postHearts){
         this.heartCount = postHearts.size();
     }
-
-    public void update(List<PostHeart> postHearts){
-        this.heartCount = postHearts.size();
-    }
-
-
 }
 
 
