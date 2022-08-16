@@ -28,7 +28,9 @@ public class PostController {
     }
 
     @GetMapping("/api/posthearts")
-    public ResponseDto<?> getAllPostByPostHeart() {return postService.getAllPostByPostHeart();}
+    public ResponseDto<?> getAllPostByPostHeart() {
+        return postService.getAllPostByPostHeart();
+    }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.GET) //게시글 단건 조회
     public ResponseDto<?> getPost(@PathVariable Long id) {
@@ -36,11 +38,12 @@ public class PostController {
     }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PUT) //게시글 수정
-    public ResponseDto<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
-        return postService.updatePost(id, postRequestDto);
+    public ResponseDto<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, HttpServletRequest httpServletRequest) {
+        return postService.updatePost(id, postRequestDto,httpServletRequest);
     }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
-    public ResponseDto<?> deletePost(@PathVariable Long id){
-        return postService.deletePost(id);
+    public ResponseDto<?> deletePost(@PathVariable Long id, HttpServletRequest httpServletRequest) {
+        return postService.deletePost(id, httpServletRequest);
     }
+}
