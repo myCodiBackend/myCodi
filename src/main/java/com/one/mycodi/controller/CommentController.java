@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 public class CommentController {
-
     private final CommentService commentService;
 
     @PostMapping("/mycodi/comments")
