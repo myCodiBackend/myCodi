@@ -17,12 +17,12 @@ public class PostHeartController {
 
     private final PostHeartService postHeartService;
 
-    @PostMapping("/mycodi/like/posts/{id}")
+    @PostMapping("/api/like/posts/{id}")
     public ResponseDto<?> postHeart(@PathVariable Long id, HttpServletRequest httpServletRequest) {
         return postHeartService.createPostHeart(id, httpServletRequest);
     }
 
-    @DeleteMapping("/mycodi/like/posts/{id}")
+    @DeleteMapping("/api/like/posts/{id}")
     public ResponseDto<?> postHeartDelete(@PathVariable Long id, HttpServletRequest httpServletRequest) {
         return postHeartService.deletePostHeart(id, httpServletRequest);
     }
