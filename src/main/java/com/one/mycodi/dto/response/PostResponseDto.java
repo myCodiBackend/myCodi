@@ -19,7 +19,7 @@ public class PostResponseDto {
     private String content;
     private String author;
     private int heart;
-    private List<CommentResponseDto> comments;
+//    private List<CommentResponseDto> comments;
 
     //  private Long heartCount;
 //    private List<CommentResponseDto> commentResponseDtoList;

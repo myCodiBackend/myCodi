@@ -109,20 +109,20 @@ public class PostService {
             return ResponseDto.fail("200", "존재하지 않는 게시글 id 입니다.");
         }
 
-        List<Comment> commentList = commentRepository.findAllByPost(post);
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-        for(Comment comment : commentList){
-            commentResponseDtoList.add(
-                    CommentResponseDto.builder()
-                    .id(comment.getId())
-                    .author(post.getMember().getUsername())
-                    .content(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .modifiedAt(comment.getModifiedAt())
-                    .build()
-            );
-        }
+//        List<Comment> commentList = commentRepository.findAllByPost(post);
+//        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//        for(Comment comment : commentList){
+//            commentResponseDtoList.add(
+//                    CommentResponseDto.builder()
+//                    .id(comment.getId())
+//                    .author(post.getMember().getUsername())
+//                    .content(comment.getContent())
+//                    .createdAt(comment.getCreatedAt())
+//                    .modifiedAt(comment.getModifiedAt())
+//                    .build()
+//            );
+//        }
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -133,7 +133,7 @@ public class PostService {
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .heart(post.getPostHeart().size())
-                        .comments(commentResponseDtoList)
+//                        .comments(commentResponseDtoList)
                         .imageUrl(null)
                         .build()
         );
