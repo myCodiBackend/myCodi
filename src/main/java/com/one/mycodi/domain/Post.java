@@ -45,6 +45,7 @@ public class Post extends Timestamped {
     @Column
     private int heartCount = this.PostHeart.size();
 
+
     public void update(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();

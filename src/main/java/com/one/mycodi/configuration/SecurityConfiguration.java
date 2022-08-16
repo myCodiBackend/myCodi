@@ -49,20 +49,23 @@ public class SecurityConfiguration{
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors();
-
+        //csrf : 일종의 공격방식
         http.csrf().disable()
                 .headers()
                 .frameOptions()
                 .sameOrigin()
                 .and()
+                // exceptionHandling 메서드를 이용하여 401, 403 에러 메세지를 커스텀
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPointException)
                 .accessDeniedHandler(accessDeniedHandlerException)
 
+                // 세션을 비활성화
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+                //인증일 필요없는 API 설정정
                 .and()
                 .authorizeRequests()
                 .antMatchers("/mycodi/members/**").permitAll()
@@ -71,7 +74,9 @@ public class SecurityConfiguration{
                 .antMatchers("/api/comment/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
-                .and()
+
+                // JWT 인증방식 커스텀텀
+               .and()
                 .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
 
         return http.build();
