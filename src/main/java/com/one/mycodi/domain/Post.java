@@ -1,12 +1,14 @@
 package com.one.mycodi.domain;
 
 import com.one.mycodi.dto.request.PostRequestDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,6 @@ public class Post extends Timestamped {
 
     @Column(nullable = false)
     private String content;
-
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne
