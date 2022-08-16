@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+// 필터에서 Security 정보를 호출받기위해 OncePerRequestFilter 상속시킴
 public class JwtFilter extends OncePerRequestFilter {
 
     public static String AUTHORIZATION_HEADER = "Authorization";

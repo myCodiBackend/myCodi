@@ -100,6 +100,7 @@ public class MemberService {
         return optionalMember.orElse(null);
     }
 
+    // Header에 값을 넣어주기 위한 메서드
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
