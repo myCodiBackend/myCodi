@@ -5,11 +5,10 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.one.mycodi.domain.Comment;
 import com.one.mycodi.domain.Member;
 import com.one.mycodi.domain.Post;
-import com.one.mycodi.dto.request.PostRequestDto;
-import com.one.mycodi.dto.response.CommentResponseDto;
+import com.one.mycodi.dto.request.ContentRequestDto;
+import com.one.mycodi.dto.request.TitleRequestDto;
 import com.one.mycodi.dto.response.PostListResponseDto;
 import com.one.mycodi.dto.response.PostResponseDto;
 import com.one.mycodi.dto.response.ResponseDto;
@@ -17,7 +16,6 @@ import com.one.mycodi.jwt.TokenProvider;
 import com.one.mycodi.repository.CommentRepository;
 import com.one.mycodi.repository.PostRepository;
 import com.one.mycodi.shared.S3Utils;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +44,7 @@ public class PostService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     @Transactional
-    public ResponseDto<?> createPost(PostRequestDto requestDto, MultipartFile multipartFile, HttpServletRequest httpServletRequest) throws IOException {// post 작성
+    public ResponseDto<?> createPost(TitleRequestDto titleRequestDto,ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest httpServletRequest) throws IOException {// post 작성
 
         if (null == httpServletRequest.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
@@ -80,8 +78,8 @@ public class PostService {
 
 
         Post post = Post.builder()
-                .title(requestDto.getTitle())
-                .content(requestDto.getContent())
+                .title(titleRequestDto.getTitle())
+                .content(contentRequestDto.getContent())
                 .imageUrl(imageUrl)
                 .member(member)
                 .build();
@@ -168,7 +166,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto,MultipartFile multipartFile,HttpServletRequest request)throws IOException {   // post 업데이트
+    public ResponseDto<?> updatePost(Long id,TitleRequestDto titleRequestDto,ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest request)throws IOException {   // post 업데이트
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -215,10 +213,11 @@ public class PostService {
                 throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", multipartFile.getOriginalFilename()));
             }
             post.updateImage(imageUrl);
+            post.update(titleRequestDto,contentRequestDto); // 타이틀과 컨텐트는 무조건 dto내용을 반영하는 코드
         }
         else {
 
-            post.update(requestDto);
+            post.update(titleRequestDto,contentRequestDto);
 
         }
 

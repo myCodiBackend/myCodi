@@ -1,7 +1,8 @@
 package com.one.mycodi.domain;
 
-import com.one.mycodi.dto.request.PostRequestDto;
+import com.one.mycodi.dto.request.ContentRequestDto;
 
+import com.one.mycodi.dto.request.TitleRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,11 +36,11 @@ public class Post extends Timestamped {
     private Member member;
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
+    @OneToMany(orphanRemoval = true, mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
+    @OneToMany(orphanRemoval = true, mappedBy = "post")
     private List<PostHeart> PostHeart = new ArrayList<>();
 
 
@@ -47,9 +48,9 @@ public class Post extends Timestamped {
     private int heartCount;
 
 
-    public void update(PostRequestDto postRequestDto) {
-        this.title = postRequestDto.getTitle();
-        this.content = postRequestDto.getContent();
+    public void update(TitleRequestDto titleRequestDto,ContentRequestDto contentRequestDto) {
+        this.title = titleRequestDto.getTitle();
+        this.content = contentRequestDto.getContent();
     }
     public void updateImage(String imageUrl){
         this.imageUrl = imageUrl;

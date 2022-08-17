@@ -1,7 +1,8 @@
 package com.one.mycodi.controller;
 
 
-import com.one.mycodi.dto.request.PostRequestDto;
+import com.one.mycodi.dto.request.ContentRequestDto;
+import com.one.mycodi.dto.request.TitleRequestDto;
 import com.one.mycodi.dto.response.ResponseDto;
 import com.one.mycodi.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ public class PostController {
     private final PostService postService;
 
     @RequestMapping(value = "/api/posts", method = RequestMethod.POST) // 게시글 작성
-    public ResponseDto<?> createPost(@RequestPart(value = "post") PostRequestDto requestDto,@RequestPart(value = "image") MultipartFile multipartFile,
+    public ResponseDto<?> createPost(@RequestPart(value = "title") TitleRequestDto titlerequestDto, @RequestPart(value = "content") ContentRequestDto contentrequestDto, @RequestPart(value = "imageUrl") MultipartFile multipartFile,
                                      HttpServletRequest httpServletRequest) throws IOException {
-        return postService.createPost(requestDto,multipartFile, httpServletRequest);
+        return postService.createPost(titlerequestDto,contentrequestDto,multipartFile, httpServletRequest);
     }
 
     @RequestMapping(value = "/api/posts", method = RequestMethod.GET) // 게시글 전체 조회
@@ -39,9 +40,9 @@ public class PostController {
     }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PATCH) //게시글 수정,이미지까지
-    public ResponseDto<?> updatePost(@PathVariable Long id,@RequestPart(value = "post",required = false) PostRequestDto postrequestDto,@RequestPart(value = "image",required = false) MultipartFile multipartFile,
+    public ResponseDto<?> updatePost(@PathVariable Long id,@RequestPart(value = "title",required = false) TitleRequestDto titlerequestDto, @RequestPart(value = "content",required = false) ContentRequestDto contentrequestDto, @RequestPart(value = "imageUrl",required = false) MultipartFile multipartFile,
                                      HttpServletRequest httpServletRequest)throws IOException {
-        return postService.updatePost(id, postrequestDto,multipartFile,httpServletRequest);
+        return postService.updatePost(id, titlerequestDto,contentrequestDto,multipartFile,httpServletRequest);
     }
 
     @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.DELETE) // 게시글 삭제
