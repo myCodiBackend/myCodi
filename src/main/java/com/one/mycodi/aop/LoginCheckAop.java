@@ -28,7 +28,7 @@ public class LoginCheckAop {
 
         String message = "";
         String code = "";
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             message = "MEMBER_NOT_FOUND";
             code = "로그인이 필요합니다!.";
         }
@@ -43,7 +43,7 @@ public class LoginCheckAop {
 
     @Transactional
     public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
         }
         return tokenProvider.getMemberFromAuthentication();

@@ -25,7 +25,7 @@ public class PostHeartService {
     @Transactional
     public ResponseDto<?> createPostHeart(Long id, HttpServletRequest request) {
 
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -71,7 +71,7 @@ public class PostHeartService {
     @Transactional
     public ResponseDto<?> deletePostHeart(Long id, HttpServletRequest request) {
 
-        if (null == request.getHeader("Refresh-Token")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -105,7 +105,7 @@ public class PostHeartService {
     }
     @Transactional
     public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
         }
         return tokenProvider.getMemberFromAuthentication();

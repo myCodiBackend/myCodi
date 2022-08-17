@@ -19,13 +19,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-public class SecurityConfiguration{
+public class SecurityConfiguration {
 
     @Value("${jwt.secret}")
     String SECRET_KEY;
@@ -33,6 +38,8 @@ public class SecurityConfiguration{
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationEntryPointException authenticationEntryPointException;
     private final AccessDeniedHandlerException accessDeniedHandlerException;
+
+    private final CorsFilter corsFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,6 +50,7 @@ public class SecurityConfiguration{
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         return (web) -> web.ignoring();
+
     }
 
     @Bean
@@ -51,6 +59,8 @@ public class SecurityConfiguration{
         http.cors();
         //csrf : 일종의 공격방식
         http.csrf().disable()
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .headers()
                 .frameOptions()
                 .sameOrigin()
@@ -72,16 +82,13 @@ public class SecurityConfiguration{
                 .antMatchers("/api/posts/**").permitAll()
                 .antMatchers("/api/posthearts/**").permitAll()
                 .antMatchers("/api/comments/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
 
                 // JWT 인증방식 커스텀텀
-               .and()
+                .and()
                 .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
 
         return http.build();
     }
-
-
 
 }
