@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,9 +40,20 @@ public class PostController {
         return postService.getPost(id);
     }
 
-    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PATCH) //게시글 수정,이미지까지
+    @RequestMapping(value = "/api/posts/{id}", method = RequestMethod.PUT) //게시글 수정,이미지까지
     public ResponseDto<?> updatePost(@PathVariable Long id,@RequestPart(value = "title",required = false) TitleRequestDto titlerequestDto, @RequestPart(value = "content",required = false) ContentRequestDto contentrequestDto, @RequestPart(value = "imageUrl",required = false) MultipartFile multipartFile,
                                      HttpServletRequest httpServletRequest)throws IOException {
+
+//        System.out.println("multipart!!! "+ multipartFile.getOriginalFilename());
+//
+//        boolean fileEmpty = multipartFile.isEmpty();
+//        boolean fileNull = multipartFile.getOriginalFilename() == null;
+//        boolean fileEN = Objects.equals(multipartFile.getOriginalFilename(), " ");
+//
+//        System.out.println("fileEN = " + fileEN);
+//        System.out.println("fileNull = " + fileNull);
+//        System.out.println("fileEmpty = " + fileEmpty);
+
         return postService.updatePost(id, titlerequestDto,contentrequestDto,multipartFile,httpServletRequest);
     }
 

@@ -15,6 +15,8 @@ public class PostListResponseDto {
 
     private Long id;
     private String title;
+
+    private String content;
     private String author;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
@@ -26,6 +28,7 @@ public class PostListResponseDto {
     public PostListResponseDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
+        this.content = post.getContent();
         this.author = post.getMember().getUsername();
         this.createAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();

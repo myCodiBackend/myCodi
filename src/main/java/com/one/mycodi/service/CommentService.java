@@ -3,8 +3,10 @@ package com.one.mycodi.service;
 import com.one.mycodi.domain.Comment;
 import com.one.mycodi.domain.Member;
 import com.one.mycodi.domain.Post;
+import com.one.mycodi.domain.Timestamped;
 import com.one.mycodi.dto.request.CommentRequestDto;
 import com.one.mycodi.dto.response.CommentResponseDto;
+import com.one.mycodi.dto.response.GetCommentResponseDto;
 import com.one.mycodi.dto.response.ResponseDto;
 import com.one.mycodi.jwt.TokenProvider;
 import com.one.mycodi.repository.CommentRepository;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +47,12 @@ public class CommentService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-
         Post post = postService.isPresentPost(commentRequestDto.getPostId());
         if (null == post) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
         }
+
+
         Comment comment = Comment.builder()
                 .member(member)
                 .post(post)
@@ -56,17 +61,22 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        return ResponseDto.success(
-                CommentResponseDto.builder()
+        LocalDateTime createdAt = comment.getCreatedAt();
+        LocalDateTime modifiedAt = comment.getModifiedAt();
+        String parsedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        String parsedModifiedAt = modifiedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
+        return ResponseDto.success(
+                GetCommentResponseDto.builder()
                         .id(comment.getId())
                         .author(comment.getMember().getUsername())
                         .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
+                        .createdAt(parsedCreatedAt)
+                        .modifiedAt(parsedModifiedAt)
                         .build()
         );
     }
+
 
     //댓글 수정
     @Transactional
@@ -101,17 +111,25 @@ public class CommentService {
         if (comment.validateMember(member)) {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
+
         comment.update(commentRequestDto);
+
+        LocalDateTime createdAt = comment.getCreatedAt();
+        LocalDateTime modifiedAt = comment.getModifiedAt();
+        String parsedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        String parsedModifiedAt = modifiedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
         return ResponseDto.success(
-                CommentResponseDto.builder()
+                GetCommentResponseDto.builder()
                         .id(comment.getId())
                         .author(comment.getMember().getUsername())
                         .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
+                        .createdAt(parsedCreatedAt)
+                        .modifiedAt(parsedModifiedAt)
                         .build()
         );
     }
+
 
     //댓글 삭제
     @Transactional
@@ -146,26 +164,31 @@ public class CommentService {
 
     //해당 게시글에 있는 전체 댓글 가져오기
     @Transactional
-    public ResponseDto<?> getComment(CommentRequestDto commentRequestDto) {
+    public ResponseDto<?> getComment(Long id) {
 
-        Post post = postService.isPresentPost(commentRequestDto.getPostId());
+        Post post = postService.isPresentPost(id);
         if (null == post) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
         }
         List<Comment> commentList = commentRepository.findAllByPost(post);
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        List<GetCommentResponseDto> getCommentResponseDtoList = new ArrayList<>();
         for(Comment comment : commentList){
-            commentResponseDtoList.add(
-            CommentResponseDto.builder()
-                    .id(comment.getId())
-                    .author(post.getMember().getUsername())
-                    .content(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .modifiedAt(comment.getModifiedAt())
-                    .build()
+            LocalDateTime createdAt = comment.getCreatedAt();
+            LocalDateTime modifiedAt = comment.getModifiedAt();
+            String parsedCreatedAt = createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            String parsedModifiedAt = modifiedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            getCommentResponseDtoList.add(
+                    GetCommentResponseDto.builder()
+                            .id(comment.getId())
+                            .author(comment.getMember().getUsername())
+                            .content(comment.getContent())
+                            .createdAt(parsedCreatedAt)
+                            .modifiedAt(parsedModifiedAt)
+                            .build()
             );
         }
-        return ResponseDto.success(commentResponseDtoList);
+
+        return ResponseDto.success(getCommentResponseDtoList);
     }
 
 

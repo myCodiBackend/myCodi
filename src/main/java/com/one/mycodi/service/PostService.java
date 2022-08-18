@@ -43,8 +43,9 @@ public class PostService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
+
     @Transactional
-    public ResponseDto<?> createPost(TitleRequestDto titleRequestDto,ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest httpServletRequest) throws IOException {// post 작성
+    public ResponseDto<?> createPost(TitleRequestDto titleRequestDto, ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest httpServletRequest) throws IOException {// post 작성
 
         if (null == httpServletRequest.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
@@ -166,7 +167,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto<?> updatePost(Long id,TitleRequestDto titleRequestDto,ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest request)throws IOException {   // post 업데이트
+    public ResponseDto<?> updatePost(Long id, TitleRequestDto titleRequestDto, ContentRequestDto contentRequestDto, MultipartFile multipartFile, HttpServletRequest request)  {   // post 업데이트
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -183,7 +184,6 @@ public class PostService {
         }
 
 
-
         Post post = isPresentPost(id);
         if (null == post) {
             return ResponseDto.fail("200", "존재하지 않는 게시글 id 입니다.");
@@ -195,33 +195,29 @@ public class PostService {
 
         String imageUrl;
         if (!multipartFile.isEmpty()) {
-
+            System.out.println("++++++++++++++++++++++++if문 진입");
             String fileName = S3Utils.buildFileName(multipartFile.getOriginalFilename());
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(multipartFile.getContentType());
 
-            try( InputStream inputStream = multipartFile.getInputStream() ) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
                 amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
 
 
                 imageUrl = amazonS3Client.getUrl(bucketName, fileName).toString();
-
-            }
-            catch (IOException e){
+                post.updateImage(imageUrl);
+                post.update(titleRequestDto, contentRequestDto);
+            } catch (IOException e) {
                 throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", multipartFile.getOriginalFilename()));
             }
-            post.updateImage(imageUrl);
-            post.update(titleRequestDto,contentRequestDto); // 타이틀과 컨텐트는 무조건 dto내용을 반영하는 코드
-        }
-        else {
-
-            post.update(titleRequestDto,contentRequestDto);
+        } // 타이틀과 컨텐트는 무조건 dto내용을 반영하는 코드
+       else {
+            System.out.println("+++++++++++++++++++++++else문 진입");
+            post.update(titleRequestDto, contentRequestDto);
 
         }
-
-
 
 
         return ResponseDto.success(
@@ -238,7 +234,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto<?> deletePost(Long id,HttpServletRequest request) { // post 삭제
+    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) { // post 삭제
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");

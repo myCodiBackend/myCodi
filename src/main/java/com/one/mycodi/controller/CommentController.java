@@ -29,8 +29,8 @@ public class CommentController {
     }
 
     //해당 게시글에 있는 전체 댓글 가져오기
-    @GetMapping("/api/comments")
-    public ResponseDto<?> getComment(@RequestBody CommentRequestDto commentRequestDto){
-        return commentService.getComment(commentRequestDto);
+    @GetMapping("/api/comments/{id}")
+    public ResponseDto<?> getComment(@PathVariable Long id){
+        return commentService.getComment(id);
     }
 }
